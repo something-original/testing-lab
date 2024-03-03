@@ -1,43 +1,19 @@
-from task import GeneralTask, ExtendedTask, generate_id
+from task import GeneralTask, ExtendedTask
+from random import choice, randint
 
-print(generate_id())
+class Generator():
+    def __init__(self):
+        pass
+    
 
-task1 = GeneralTask(0)
-print(task1.priority)
-print(task1.state)
-task1.activate()
-print(task1.state)
-task1.start()
-print(task1.state)
-task1.preempt()
-print(task1.state)
-task1.start()
-print(task1.state)
-task1.terminate()
-print(task1.state)
+    def generate(self):
+            is_extended = choice([True, False])
+            priority = randint(0, 3)
+            task = ExtendedTask(priority) if is_extended else GeneralTask(priority)
+            print(f'Type  {type(task)}, priority  {task.priority}, id {task.id}')
+            #return task
 
-try:
-    task2 = ExtendedTask(4)
-except ValueError:
-    pass
 
-task2 = ExtendedTask(3)
-print(task2.priority)
-print(task2.state)
-task2.activate()
-print(task2.state)
-task2.start()
-print(task2.state)
-task2.preempt()
-print(task2.state)
-task2.start()
-print(task2.state)
-task2.wait()
-print(task2.state)
-task2.release()
-print(task2.state)
-task2.start()
-print(task2.state)
-task2.terminate()
-print(task2.state)
+generator = Generator()
+generator.generate()
 

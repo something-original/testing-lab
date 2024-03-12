@@ -1,5 +1,6 @@
 from enum import Enum
 from random import randint
+import time
 
 class BaseState(Enum):
     READY = 1
@@ -21,16 +22,21 @@ def generate_id():
 
 
 class GeneralTask():
-    def __init__(self, priority):
+    def __init__(self, priority, finish_time):
         if priority in [0,1,2,3]:
             self.priority = priority
         else:
             raise ValueError("Приоритет должен быть целым числом от 0 до 3")
         self.state = BaseState.SUSPENDED
         self.id = generate_id()
+        self.finish_time = finish_time
     
     state: BaseState
     priority: int
+    finish_time : int
+    current_time : int
+    time_left : int
+    start_time : int
     id : str
 
     def activate(self):
@@ -41,6 +47,7 @@ class GeneralTask():
     
     def start(self):
         if self.state == self.state.READY:
+            self.start_time = time.time()
             self.state = self.state.RUNNING
         else:
             pass   
@@ -67,6 +74,8 @@ class ExtendedTask(GeneralTask):
 
     def wait(self):
         if self.state == self.state.RUNNING:
+            self.current_time = time.time() - self.start_time
+            self.time_left = self.finish_time - self.current_time
             self.state = self.state.WAITING
         else:
             pass         

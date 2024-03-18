@@ -1,6 +1,7 @@
-from task import ExtendedTask, GeneralTask
 from queue import Queue
-from typing import Union
+
+from task import GeneralTask
+
 
 class Planner():
     def __init__(self):
@@ -11,11 +12,11 @@ class Planner():
     queue_2: Queue
     queue_3: Queue
 
-    current_task: None
+    current_task: GeneralTask|None
 
-    def receive_task(self, task):
-        if isinstance(task, (GeneralTask, ExtendedTask)):
-            
+    def receive_task(self, task: GeneralTask):
+        if isinstance(task, GeneralTask):
+
             if task.priority == 0:
                 self.queue_0.put(task)
             elif task.priority == 1:
@@ -25,16 +26,16 @@ class Planner():
             elif task.priority == 3:
                 self.queue_3.put(task)
 
-            self.pick_task(task)       
+            self.pick_task(task)
         else:
             pass
 
-    def pick_task(self, task: Union[GeneralTask, ExtendedTask]):
-        
-        if self.current_task == None:
+    def pick_task(self, task: GeneralTask):
+
+        if self.current_task is None:
             self.current_task = task
 
         else:
             if self.current_task.priority < task.priority:
-                if isinstance(self.current_task, GeneralTask):
+                if type(self.current_task) is GeneralTask:
                     pass

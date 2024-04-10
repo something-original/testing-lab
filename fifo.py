@@ -18,3 +18,6 @@ class Fifo():
         else:
             print(f"Очередь приоритета {task.priority} заполнена")
 
+    def __str__(self):
+      return [queue.qsize() for queue in self.queues.values()].__str__()
+

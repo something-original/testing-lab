@@ -13,13 +13,13 @@ class Generator():
 
     def generate(self):
       while True:
-        delay = randint(0, 5)
+        delay = randint(0, 3)
         is_extended = choice([True, False])
         priority = randint(0, 3)
-        time_left = randint(7, 10)
+        time_left = randint(2, 7)
         task = ExtendedTask(priority, time_left) if is_extended else GeneralTask(priority, time_left)
         time.sleep(delay)
-        print(f'Создана задача {type(task)}, приоритет {task.priority}, id {task.id}')
+        print(f'Создана задача {type(task)}, приоритет {task.priority}, id {task.id}, длительность {task.time_left}')
         self.fifo.put_task(task)
 
 

@@ -10,5 +10,5 @@ if __name__=="__main__":
   stop_event = Event()
   main_scheduler = Scheduler(main_fifo, stop_event)
   main_generator.run()
-  main_scheduler.run_scheduler()
+  main_scheduler.pick_task()
 

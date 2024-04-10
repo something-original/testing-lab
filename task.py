@@ -1,6 +1,8 @@
 from enum import Enum
 from random import randint
 import time
+from threading import Thread
+
 
 class BaseState(Enum):
     READY = 1
@@ -11,7 +13,7 @@ class ExtendedState(Enum):
     READY = 1
     RUNNING = 2
     SUSPENDED = 3
-    WAITING = 4  
+    WAITING = 4
 
 
 def generate_id():
@@ -30,7 +32,7 @@ class GeneralTask():
         self.state = BaseState.SUSPENDED
         self.id = generate_id()
         self.time_left = time
-    
+
     state: BaseState
     priority: int
     time_left : int
@@ -42,27 +44,34 @@ class GeneralTask():
             self.state = self.state.READY
         else:
             pass
-    
+
     def start(self):
         if self.state == self.state.READY:
             self.start_time = time.time()
             self.state = self.state.RUNNING
-            time.sleep(self.time_left)
-            self.preempt()
+            for i in range(0,self.time_left):
+              time.sleep(1)
+              self.time_left = self.time_left - i
+              if self.state == self.state.READY:
+                return
+            self.terminate()
         else:
-            pass   
+            pass
 
     def preempt(self):
         if self.state == self.state.RUNNING:
             self.state = self.state.READY
         else:
-            pass       
+            pass
 
     def terminate(self):
         if self.state == self.state.RUNNING:
             self.state = self.state.SUSPENDED
         else:
-            pass    
+            pass
+
+    def run(self):
+      Thread(target=self.start)
 
 
 class ExtendedTask(GeneralTask):
@@ -72,16 +81,31 @@ class ExtendedTask(GeneralTask):
 
     state: ExtendedState
 
+    def start(self):
+        if self.state == self.state.READY:
+            self.start_time = time.time()
+            self.state = self.state.RUNNING
+            for i in range(0,self.time_left):
+              time.sleep(1)
+              self.time_left = self.time_left - i
+              if self.state == self.state.READY or self.state == self.state.WAITING:
+                return
+            self.terminate()
+        else:
+            pass
+
+
     def wait(self):
         if self.state == self.state.RUNNING:
-            current_time = time.time() - self.start_time
-            self.time_left = self.time_left - current_time
             self.state = self.state.WAITING
         else:
-            pass         
+            pass
 
     def release(self):
         if self.state == self.state.WAITING:
             self.state = self.state.READY
         else:
-            pass    
+            pass
+
+    def run(self):
+      Thread(target=self.start)

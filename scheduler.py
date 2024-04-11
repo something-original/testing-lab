@@ -4,25 +4,34 @@ import time
 from collections import deque
 from queue import Empty, Queue
 from threading import Thread
-from typing import Set, Dict, Deque
+from typing import Set, Dict, Deque, Any
 
 from task import BaseState, ExtendedState
 from task import ExtendedTask, GeneralTask
 
+
+class MyDeque(Deque):
+  def append(self, __x: Any) -> None:
+    if self.__len__() < self.maxlen:
+      super().append(__x)
+
+  def appendleft(self, __x: Any) -> None:
+    if self.__len__() < self.maxlen:
+      super().appendleft(__x)
 
 class Scheduler():
   def __init__(self, events: Queue[ExtendedTask|GeneralTask], dequeue_size=10):
     self.events = events
     self.current_task = None
     self.tasks= {
-      3: deque([], dequeue_size),
-      2: deque([], dequeue_size),
-      1: deque([], dequeue_size),
-      0: deque([], dequeue_size)
+      3: MyDeque([], dequeue_size),
+      2: MyDeque([], dequeue_size),
+      1: MyDeque([], dequeue_size),
+      0: MyDeque([], dequeue_size)
     }
     self.sleeping_tasks: Set[ExtendedTask] = set()
 
-    tasks: Dict[int,Deque[ExtendedTask|GeneralTask]]
+    tasks: Dict[int,MyDeque[ExtendedTask|GeneralTask]]
     sleeping_tasks: Set[ExtendedTask]
     current_task: None|GeneralTask|ExtendedTask
     events: Queue

@@ -56,6 +56,7 @@ class GeneralTask():
         self.start()
         self.start_time = time.time()
         timeIter = self.time_left
+        print(timeIter)
         for i in range(timeIter):
           time.sleep(1)
           self.time_left = self.time_left - 1
@@ -94,6 +95,7 @@ class ExtendedTask(GeneralTask):
         self.start()
         self.start_time = time.time()
         timeIter = self.time_left
+        print(timeIter)
         logging.info(f"timeleft {timeIter}")
         for i in range(timeIter):
           time.sleep(1)

@@ -83,18 +83,18 @@ class ExtendedTask(GeneralTask):
     state: ExtendedState
 
     def start(self):
-        if self.state == self.state.READY:
-            self.start_time = time.time()
-            self.state = self.state.RUNNING
-            timeIter = self.time_left
-            for i in range(timeIter):
-              time.sleep(1)
-              self.time_left = self.time_left - 1
-              if self.state == self.state.READY or self.state == self.state.WAITING:
-                return
-            self.terminate()
-        else:
-            pass
+      if self.state == self.state.READY:
+          self.start_time = time.time()
+          self.state = self.state.RUNNING
+          timeIter = self.time_left
+          for i in range(timeIter):
+            time.sleep(1)
+            self.time_left = self.time_left - 1
+            if self.state == self.state.READY or self.state == self.state.WAITING:
+              return
+          self.terminate()
+      else:
+          pass
 
 
     def wait(self):
@@ -110,4 +110,4 @@ class ExtendedTask(GeneralTask):
             pass
 
     def run(self):
-      Thread(target=self.start)
+      Thread(target=self.start).start()

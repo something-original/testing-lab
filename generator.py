@@ -4,6 +4,7 @@ from task import GeneralTask, ExtendedTask
 from random import choice, randint, random
 from fifo import Fifo
 import time
+import logging
 
 class Generator():
     def __init__(self, fifo):
@@ -11,15 +12,17 @@ class Generator():
 
     fifo: Fifo
 
-    def generate(self):
-      while True:
+    def generate(self, tasksReq=20):
+      tasksCreated=0
+      while tasksCreated<tasksReq:
         delay = randint(0, 3)
         is_extended = choice([True, False])
         priority = randint(0, 3)
         time_left = randint(2, 7)
         task = ExtendedTask(priority, time_left) if is_extended else GeneralTask(priority, time_left)
+        tasksCreated+=1
         time.sleep(delay)
-        print(f'Создана задача {type(task)}, приоритет {task.priority}, id {task.id}, длительность {task.time_left}')
+        logging.info(f'Создана задача {type(task)}, приоритет {task.priority}, id {task.id}, длительность {task.time_left}')
         self.fifo.put_task(task)
 
 

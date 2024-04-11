@@ -1,3 +1,4 @@
+import random
 from enum import Enum
 from random import randint
 import time
@@ -47,17 +48,21 @@ class GeneralTask():
 
     def start(self):
         if self.state == self.state.READY:
-            self.start_time = time.time()
             self.state = self.state.RUNNING
-            timeIter = self.time_left
-            for i in range(timeIter):
-              time.sleep(1)
-              self.time_left = self.time_left - 1
-              if self.state == self.state.READY:
-                return
-            self.terminate()
-        else:
-            pass
+
+    def run_task(self):
+      if self.state == self.state.READY:
+        self.start()
+        self.start_time = time.time()
+        timeIter = self.time_left
+        for i in range(timeIter):
+          time.sleep(1)
+          self.time_left = self.time_left - 1
+          if self.state == self.state.READY:
+            return
+        self.terminate()
+      else:
+        pass
 
     def preempt(self):
         if self.state == self.state.RUNNING:
@@ -72,7 +77,7 @@ class GeneralTask():
             pass
 
     def run(self):
-      Thread(target=self.start).start()
+      Thread(target=self.run_task).start()
 
 
 class ExtendedTask(GeneralTask):
@@ -81,18 +86,19 @@ class ExtendedTask(GeneralTask):
         self.state = ExtendedState.SUSPENDED
 
     state: ExtendedState
+    activated: bool = False
 
-    def start(self):
+    def run_task(self):
       if self.state == self.state.READY:
-          self.start_time = time.time()
-          self.state = self.state.RUNNING
-          timeIter = self.time_left
-          for i in range(timeIter):
-            time.sleep(1)
-            self.time_left = self.time_left - 1
-            if self.state == self.state.READY or self.state == self.state.WAITING:
-              return
-          self.terminate()
+        self.start()
+        self.start_time = time.time()
+        timeIter = self.time_left
+        for i in range(timeIter):
+          time.sleep(1)
+          self.time_left = self.time_left - 1
+          if self.state == self.state.READY or self.state == self.state.WAITING:
+            return
+        self.terminate()
       else:
           pass
 
@@ -109,5 +115,13 @@ class ExtendedTask(GeneralTask):
         else:
             pass
 
+    def wait_activate(self):
+      self.wait()
+      time.sleep(random.randint(1,5))
+      self.activated=True
+
     def run(self):
-      Thread(target=self.start).start()
+      Thread(target=self.run_task).start()
+
+    def start_waiting(self):
+      Thread(target=self.wait_activate).start()

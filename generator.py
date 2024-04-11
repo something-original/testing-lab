@@ -1,16 +1,17 @@
+import logging
+import time
+from asyncio import Queue
+from random import choice, randint
 from threading import Thread
 
 from task import GeneralTask, ExtendedTask
-from random import choice, randint, random
-from fifo import Fifo
-import time
-import logging
+
 
 class Generator():
     def __init__(self, fifo):
         self.fifo = fifo
 
-    fifo: Fifo
+    fifo: Queue
 
     def generate(self, tasksReq=20):
       tasksCreated=0
@@ -23,7 +24,7 @@ class Generator():
         tasksCreated+=1
         time.sleep(delay)
         logging.info(f'Создана задача {type(task)}, приоритет {task.priority}, id {task.id}, длительность {task.time_left}')
-        self.fifo.put_task(task)
+        self.fifo.put(task)
 
 
     def create_task(params: str):

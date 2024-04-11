@@ -16,7 +16,7 @@ class Generator():
     def generate(self, tasksReq=20):
       tasksCreated=0
       while tasksCreated<tasksReq:
-        delay = randint(0, 3)
+        delay = randint(1, 3)
         is_extended = choice([True, False])
         priority = randint(0, 3)
         time_left = randint(2, 7)

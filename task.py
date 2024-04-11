@@ -1,3 +1,4 @@
+import logging
 import random
 from enum import Enum
 from random import randint
@@ -93,6 +94,7 @@ class ExtendedTask(GeneralTask):
         self.start()
         self.start_time = time.time()
         timeIter = self.time_left
+        logging.info(f"timeleft {timeIter}")
         for i in range(timeIter):
           time.sleep(1)
           self.time_left = self.time_left - 1
@@ -116,8 +118,10 @@ class ExtendedTask(GeneralTask):
             pass
 
     def wait_activate(self):
+      self.activated = False
       self.wait()
       time.sleep(random.randint(1,5))
+      self.release()
       self.activated=True
 
     def run(self):

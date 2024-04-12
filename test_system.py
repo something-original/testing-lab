@@ -130,9 +130,10 @@ class Test:
     print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task1
     time.sleep(1.1)
-    events_loop.put(task2)
-    time.sleep(0.3)
     events_loop.put(task3)
+    time.sleep(0.2)
+    events_loop.put(task2)
+    time.sleep(0.2)
     print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task2
     time.sleep(1.1)
@@ -150,49 +151,36 @@ class Test:
     main_scheduler = Scheduler(events_loop, allow_stopping=False)
     main_scheduler.pick_task_threaded()
     task1 = GeneralTask(0, 2)
-    print(task1.id)
     task2 = GeneralTask(1, 1)
-    print(task2.id)
     task3 = GeneralTask(1, 2)
-    print(task3.id)
     task4 = GeneralTask(2, 2)
-    print(task4.id)
     task5 = GeneralTask(3, 2)
-    print(task5.id)
     task6 = GeneralTask(2, 1)
     events_loop.put(task1)
     time.sleep(0.2)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task1
     time.sleep(1.1)
     events_loop.put(task2)
     events_loop.put(task3)
     time.sleep(0.2)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task2
     time.sleep(1.1)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task3
     time.sleep(1.1)
     events_loop.put(task4)
     time.sleep(0.2)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task4
     time.sleep(1.1)
     events_loop.put(task6)
     time.sleep(0.2)
     events_loop.put(task5)
     time.sleep(0.2)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task5
     time.sleep(2.1)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task6
     time.sleep(1.1)
     assert main_scheduler.current_task == task4
     time.sleep(1.1)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task3
     time.sleep(1.1)
-    print(main_scheduler.current_task.id)
     assert main_scheduler.current_task == task1

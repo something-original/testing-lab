@@ -124,9 +124,9 @@ class ExtendedTask(GeneralTask):
     def wait_activate(self):
       self.activated = False
       self.wait()
-      #time.sleep(random.randint(1,5))
+      time.sleep(random.randint(1,5))
       #Для теста
-      time.sleep(1)
+      #time.sleep(1)
       self.release()
       self.activated=True
 

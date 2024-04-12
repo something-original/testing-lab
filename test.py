@@ -1,14 +1,27 @@
-import logging
 import time
+from queue import Queue
 
 import pytest
-from collections import deque
+
+from generator import Generator
 from scheduler import MyDeque
 from task import GeneralTask, ExtendedTask, BaseState, ExtendedState
 
 general_task = GeneralTask(1, 2)
 extended_task = ExtendedTask(2, 2)
-logging.basicConfig(level=logging.INFO, filename="testing.log",filemode="w",encoding="utf-8",format="%(asctime)s %(levelname)s %(message)s")
+
+
+def correct_task(task: GeneralTask | ExtendedTask) -> bool:
+  if int(task.id) not in range(1001):
+    print(int(task.id))
+    return False
+  if task.state!=BaseState.SUSPENDED and task.state!=ExtendedState.SUSPENDED:
+    print(task.state)
+    return False
+  if task.priority not in range(4):
+    print(task.priority)
+    return False
+  return True
 
 
 class Test:
@@ -73,6 +86,17 @@ class Test:
       assert not 10 in deque_var
 
 
+    def test_generator(self):
+      events_loop: Queue[GeneralTask|ExtendedTask] = Queue()
+      main_generator = Generator(events_loop)
+      main_generator.generate(10)
+      for i in range(10):
+        task = events_loop.get(block=True)
+        assert correct_task(task)
+
+
+
+
     def test_task_running(self):
       test_task = GeneralTask(3,5)
       test_task.activate()
@@ -80,10 +104,10 @@ class Test:
       assert test_task.state == BaseState.RUNNING
       time.sleep(2.1)
       test_task.preempt()
-      time.sleep(1)
+      time.sleep(0.1)
       assert test_task.state == BaseState.READY
       test_task.run()
-      time.sleep(2.1)
+      time.sleep(3.1)
       assert test_task.state == BaseState.SUSPENDED
 
 
@@ -94,10 +118,10 @@ class Test:
       assert test_task.state == ExtendedState.RUNNING
       time.sleep(2.1)
       test_task.preempt()
-      time.sleep(1)
+      time.sleep(0.1)
       assert test_task.state == ExtendedState.READY
       test_task.run()
-      time.sleep(1.1)
+      time.sleep(3.1)
       test_task.wait()
       assert test_task.state == ExtendedState.WAITING
       test_task.release()

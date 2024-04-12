@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO, filename="test_log.log",filemode="w",enc
 if __name__=="__main__":
   events_loop=Queue()
   main_generator = Generator(events_loop)
-  main_scheduler = Scheduler(events_loop)
+  main_scheduler = Scheduler(events_loop,allow_stopping=False)
   main_generator.run()
   main_scheduler.pick_task()
 

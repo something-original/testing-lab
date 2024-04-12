@@ -1,13 +1,10 @@
 import logging
 import random
 import time
-from collections import deque
-from queue import Empty, Queue
+from queue import Queue
 from threading import Thread
 from typing import Set, Dict, Deque, Any
-
-from task import BaseState, ExtendedState
-from task import ExtendedTask, GeneralTask
+from task import BaseState, ExtendedState, ExtendedTask, GeneralTask
 
 
 class MyDeque(Deque):
@@ -20,7 +17,7 @@ class MyDeque(Deque):
       super().appendleft(__x)
 
 class Scheduler():
-  def __init__(self, events: Queue[ExtendedTask|GeneralTask], dequeue_size=10):
+  def __init__(self, events: Queue[ExtendedTask|GeneralTask], dequeue_size=10, allow_stopping=True):
     self.events = events
     self.current_task = None
     self.tasks= {
@@ -30,11 +27,14 @@ class Scheduler():
       0: MyDeque([], dequeue_size)
     }
     self.sleeping_tasks: Set[ExtendedTask] = set()
+    self.allow_stopping=allow_stopping
 
     tasks: Dict[int,MyDeque[ExtendedTask|GeneralTask]]
     sleeping_tasks: Set[ExtendedTask]
     current_task: None|GeneralTask|ExtendedTask
     events: Queue
+    allow_stopping: bool
+
   def clear(self):
       self.current_task = None
 
@@ -45,7 +45,8 @@ class Scheduler():
       while True:
         self._clear_stopped_tasks()
         self._recover_waiting_tasks()
-        self._kill_top_priority_task()
+        if self.allow_stopping:
+          self._kill_top_priority_task()
         if self.current_task is None:
           for deque in self.tasks.values():
             try:
@@ -111,3 +112,6 @@ class Scheduler():
         logging.info(f'Задача с {self.current_task.id} остановлена')
         self.stop_task()
         self.current_task=None
+
+  def pick_task_threaded(self):
+    Thread(target=self.pick_task).start()

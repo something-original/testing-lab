@@ -56,12 +56,12 @@ class GeneralTask():
         self.start()
         self.start_time = time.time()
         timeIter = self.time_left
-        print(timeIter)
         for i in range(timeIter):
           time.sleep(1)
-          self.time_left = self.time_left - 1
           if self.state == self.state.READY:
             return
+          else:
+            self.time_left = self.time_left - 1
         self.terminate()
       else:
         pass
@@ -81,6 +81,9 @@ class GeneralTask():
     def run(self):
       Thread(target=self.run_task).start()
 
+    def __str__(self):
+      return str(self.id)
+
 
 class ExtendedTask(GeneralTask):
     def __init__(self, priority, finish_time):
@@ -95,13 +98,12 @@ class ExtendedTask(GeneralTask):
         self.start()
         self.start_time = time.time()
         timeIter = self.time_left
-        print(timeIter)
-        logging.info(f"timeleft {timeIter}")
         for i in range(timeIter):
           time.sleep(1)
-          self.time_left = self.time_left - 1
           if self.state == self.state.READY or self.state == self.state.WAITING:
             return
+          else:
+            self.time_left = self.time_left - 1
         self.terminate()
       else:
           pass
@@ -122,7 +124,9 @@ class ExtendedTask(GeneralTask):
     def wait_activate(self):
       self.activated = False
       self.wait()
-      time.sleep(random.randint(1,5))
+      #time.sleep(random.randint(1,5))
+      #Для теста
+      time.sleep(1)
       self.release()
       self.activated=True
 
